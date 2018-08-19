@@ -13,6 +13,8 @@ import com.william.springbootSecurity.entity.UserAccount;
  */
 public interface UserAccountMapper {
 
+	public UserAccount getAccountByAccount(String account);
+	
 	public UserAccount getOnetUserAccount(UserAccount userAccount);
 	
 }
