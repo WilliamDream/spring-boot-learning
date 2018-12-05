@@ -1,0 +1,36 @@
+
+spring:
+  kafka:
+    producer: 
+      # kafka集群地址
+      bootstrap-servers: 
+      - 192.169.2.98:9092,192.169.2.156:9092,192.169.2.188:9092
+      key-serializer: 
+        org.apache.kafka.common.serialization.StringSerializer
+      value-serializer:
+        org.apache.kafka.common.serialization.StringSerializer
+      group-id: KafkaProducerDemo 
+      # 如果该值大于零时，表示启用重试失败的发送次数 
+      retries: 0
+      # 可以设置的值为：all, -1, 0, 1
+      acks: -1
+    consumer:
+      bootstrap-servers:
+      - 192.169.2.98:9092,192.169.2.156:9092,192.169.2.188:9092
+      key-deserializer:
+        org.apache.kafka.common.serialization.StringDeserializer
+      value-serializer: 
+        org.apache.kafka.common.serialization.StringDeserializer    
+      group-id: KafkaConsumerDemo
+      # 当Kafka中没有初始偏移量或者服务器上不再存在当前偏移量时该怎么办，默认值为latest，表示自动将偏移重置为最新的偏移量
+      # 可选的值为latest, earliest, none
+      auto-offset-reset: latest
+      # 如果为true，则消费者偏移自动提交给Kafka的频率（以毫秒为单位），默认值为5000
+      auto-commit-interval: true
+      # 如果为true，则消费者的偏移量将在后台定期提交，默认值为true
+      enable-auto-commit: false
+       
+      
+      
+
+
