@@ -33,4 +33,6 @@ public class SearchConfig {
         client.addTransportAddress(node);
         return client;
     }
+    
+    
 }

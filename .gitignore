@@ -1,0 +1,9 @@
+##ignore file##
+
+.classpath
+.project
+.settings
+
+
+*.mdb,*.ldb,*.sln
+

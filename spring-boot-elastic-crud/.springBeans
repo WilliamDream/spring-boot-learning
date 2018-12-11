@@ -7,7 +7,7 @@
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
-		<config>java:com.william.elasticsearch.App</config>
+		<config>java:com.william.elasticsearch.ElasticSearchApp</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

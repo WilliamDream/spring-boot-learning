@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.william.elasticsearch.conf.EsConfig;
+import com.william.elasticsearch.model.Book;
 
 /**
  * @author: william
@@ -26,8 +27,6 @@ public class BookService {
 
 	@Autowired
 	private EsConfig esconfig;
-//    private String indexName = "book"; //相当于数据库名称
-//    private String indexType = "novel";	//相当于数据表名称
 
     @Autowired
     private TransportClient client;
@@ -36,40 +35,45 @@ public class BookService {
         return this.client.prepareGet(esconfig.getIndex(),esconfig.getType(),id).get();
     }
 
-    public IndexResponse add(String title, String author, int wordCount, String publishDate) throws Exception {
-
+    
+    public IndexResponse addBook(Book book) throws Exception {
         XContentBuilder content = XContentFactory.jsonBuilder()
                 .startObject()
-                .field("title",title)
-                .field("author",author)
-                .field("publish_date",publishDate)
-                .field("word_count",wordCount)
+                .field("title",book.getTitle())
+                .field("author",book.getAuthor())
+                .field("publish_date",book.getPublishDate())
+                .field("word_count",book.getWordCount())
                 .endObject();
 
-        IndexResponse response = this.client.prepareIndex(esconfig.getIndex(),esconfig.getType())
+        IndexResponse response = this.client.prepareIndex(esconfig.getIndex(),esconfig.getType(),book.getId())
                 .setSource(content)
                 .get();
 
         return response;
-
     }
+    
 
-    public DeleteResponse remove(String id) {
+    public DeleteResponse delBook(String id) {
        return this.client.prepareDelete(esconfig.getIndex(),esconfig.getType(),id).get();
     }
 
-    public UpdateResponse modify(String id, String title, String author) throws Exception {
-        UpdateRequest request = new UpdateRequest(esconfig.getIndex(),esconfig.getType(),id);
+    public UpdateResponse editBook(Book book) throws Exception {
+        UpdateRequest request = new UpdateRequest(esconfig.getIndex(),esconfig.getType(),book.getId());
 
-        XContentBuilder builder = XContentFactory.jsonBuilder()
-                .startObject();
+        XContentBuilder builder = XContentFactory.jsonBuilder().startObject();
 
-        if(StringUtils.isEmpty(title)){
-            builder.field("title",title);
+        if(StringUtils.isEmpty(book.getTitle())){
+            builder.field("title",book.getTitle());
         }
-        if(StringUtils.isEmpty(author)){
-            builder.field("author",author);
+        if(StringUtils.isEmpty(book.getAuthor())){
+            builder.field("author",book.getAuthor());
         }
+        if(StringUtils.isEmpty(book.getPublishDate())){
+            builder.field("publish_date",book.getPublishDate());
+        }
+        /*if(book.getWordCount()!=null) {
+        	 builder.field("word_count",book.getWordCount());
+        }*/
         builder.endObject();
 
         request.doc(builder);
