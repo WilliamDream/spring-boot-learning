@@ -40,10 +40,8 @@ import com.william.elasticsearch.conf.EsConfig;
 import com.william.elasticsearch.model.Book;
 
 /**
- * @author: chaiz
+ * @author: william
  * @Description: TODO
- * @date: 2018年12月10日 上午9:52:16
- * @version: v1.0.0
  */
 
 @Service
