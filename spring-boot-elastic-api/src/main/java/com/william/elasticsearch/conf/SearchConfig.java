@@ -19,6 +19,12 @@ public class SearchConfig {
 
     @Autowired EsConfig esConfig;
 
+    private HttpHost[] esServers = new HttpHost[] {
+			new HttpHost("192.169.2.98", 9200, "http"),
+			new HttpHost("192.169.2.188", 9200, "http"),
+			new HttpHost("192.169.2.156", 9200, "http")
+	};
+    
     /*@Bean
     public TransportClient client() throws UnknownHostException{
 
@@ -39,12 +45,7 @@ public class SearchConfig {
     
     @Bean
     public RestHighLevelClient client() {
-    	
-    	RestHighLevelClient client = new RestHighLevelClient(
-    			RestClient.builder(
-    					new HttpHost("192.169.2.98", 9200, "http"),
-    					new HttpHost("192.169.2.188", 9200, "http"),
-    					new HttpHost("192.169.2.156", 9200, "http")));
+    	RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(esServers));
 		return client;
     }
     

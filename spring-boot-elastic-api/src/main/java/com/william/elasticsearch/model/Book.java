@@ -18,9 +18,31 @@ public class Book {
 	
 	private String author;
 	
-	private Integer wordCount;
+	private String type;
+	
+	private int edition;
+	
+	private int wordCount;
 	
 	private String publishDate;
+	
+	private String desc;
+
+	/**
+	 * @param id
+	 * @param title
+	 * @param author
+	 * @param wordCount
+	 * @param publishDate
+	 */
+	public Book(String id, String title, String author, Integer wordCount, String publishDate) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.author = author;
+		this.wordCount = wordCount;
+		this.publishDate = publishDate;
+	}
 	
 	
 }

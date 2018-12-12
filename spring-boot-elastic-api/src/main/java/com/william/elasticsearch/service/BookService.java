@@ -158,8 +158,11 @@ public class BookService {
 				.startObject()
 				.field("title",book.getTitle())
 	            .field("author",book.getAuthor())
-	            .field("word_count",book.getWordCount())
-	            .field("publish_date",book.getPublishDate())
+	            .field("type",book.getType())
+	            .field("edition",book.getEdition())
+	            .field("wordCount",book.getWordCount())
+	            .field("publishDate",book.getPublishDate())
+	            .field("desc",book.getDesc())
 				.endObject();
 		
 		IndexRequest request = new IndexRequest(esconfig.getIndex(),esconfig.getType(),book.getId())
@@ -192,7 +195,7 @@ public class BookService {
 //    	request.fetchSourceContext(FetchSourceContext.DO_NOT_FETCH_SOURCE);
     	//2 指定那些属性返回，那些属性过滤掉
 //    	String[] includes = new String[] {"author","*e"};
-//    	String[] excludes = new String[] {"publish_date"};
+//    	String[] excludes = new String[] {"publishDate"};
 //    	FetchSourceContext fetchSourceContext = new FetchSourceContext(true, includes, excludes);
 //    	request.fetchSourceContext(fetchSourceContext);
     	
@@ -243,11 +246,20 @@ public class BookService {
 		        if(StringUtils.isEmpty(book.getAuthor())){
 		            builder.field("author",book.getAuthor());
 		        }
-		        if(StringUtils.isEmpty(book.getPublishDate())){
-		            builder.field("publish_date",book.getPublishDate());
+		        if(StringUtils.isEmpty(book.getType())){
+		            builder.field("type",book.getType());
 		        }
-		        if(book.getWordCount()!=null) {
-		        	 builder.field("word_count",book.getWordCount());
+		        if(book.getEdition()!=0) {
+		        	builder.field("wordCount",book.getEdition());
+		        }
+		        if(StringUtils.isEmpty(book.getPublishDate())){
+		            builder.field("publishDate",book.getPublishDate());
+		        }
+		        if(book.getWordCount()!=0) {
+		        	builder.field("wordCount",book.getWordCount());
+		        }
+		        if(StringUtils.isEmpty(book.getDesc())){
+		            builder.field("desc",book.getDesc());
 		        }
 		        builder.endObject();
 		        
@@ -273,8 +285,8 @@ public class BookService {
 					.startObject()
 					.field("title",book.getTitle())
 		            .field("author",book.getAuthor())
-		            .field("word_count",book.getWordCount())
-		            .field("publish_date",book.getPublishDate())
+		            .field("wordCount",book.getWordCount())
+		            .field("publishDate",book.getPublishDate())
 			        .endObject();*/
 			request.add(new IndexRequest(esconfig.getIndex(),esconfig.getType(),idsarr[i])
 					.source(XContentType.JSON,"titile", "SpringBoot 2.0"));
