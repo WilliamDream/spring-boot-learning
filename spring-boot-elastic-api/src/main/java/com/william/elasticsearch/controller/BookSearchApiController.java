@@ -31,12 +31,28 @@ public class BookSearchApiController {
 	@Autowired
 	private BookSearchApiService service;
 	
+	@PostMapping("/searchbyid")
+	public ResponseEntity searchByBookid(@RequestBody String id) throws IOException {
+		SearchResponse response = service.searchByid(id);
+		return new ResponseEntity(response, HttpStatus.OK);
+	}
+	
 	@PostMapping("/searchall")
-	public ResponseEntity createIndex(@RequestBody BookRequest bookRequest) throws IOException {
+	public ResponseEntity searchBook(@RequestBody BookRequest bookRequest) throws IOException {
 		SearchResponse response = service.search(bookRequest);
 		return new ResponseEntity(response, HttpStatus.OK);
 	}
 	
+	@PostMapping("/searchall1")
+	public ResponseEntity searchBook1(@RequestBody BookRequest bookRequest) throws IOException {
+		SearchResponse response = service.search1(bookRequest);
+		return new ResponseEntity(response, HttpStatus.OK);
+	}
 	
 	
+	@PostMapping("/likesearch")
+	public ResponseEntity likesearch(@RequestBody BookRequest bookRequest) throws IOException {
+		SearchResponse response = service.likeSearch(bookRequest);
+		return new ResponseEntity(response, HttpStatus.OK);
+	}
 }

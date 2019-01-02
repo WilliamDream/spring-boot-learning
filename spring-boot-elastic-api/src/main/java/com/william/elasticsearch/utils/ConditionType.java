@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.william.elasticsearch.service;
+package com.william.elasticsearch.utils;
 /**   
 * Copyright: Copyright (c) 2018 Montnets
 * 

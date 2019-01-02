@@ -1,10 +1,9 @@
-package com.william.elasticsearch.service;
+package com.william.elasticsearch.utils;
 import java.util.Objects;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import com.william.elasticsearch.service.ConditionType;
 /**   
 * Copyright: Copyright (c) 2018 Montnets
 * 
