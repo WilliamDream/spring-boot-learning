@@ -21,4 +21,9 @@ public class BookRequest extends BasePage{
 	
 	private String publishDate;
 	
+	private Integer edition;
+	
+	private String startdate;
+	
+	private String enddate;
 }
