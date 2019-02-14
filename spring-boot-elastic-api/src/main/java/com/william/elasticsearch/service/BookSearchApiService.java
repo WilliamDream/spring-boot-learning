@@ -2,14 +2,10 @@ package com.william.elasticsearch.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.Strings;
@@ -17,9 +13,7 @@ import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhrasePrefixQueryBuilder;
-import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.PrefixQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
@@ -27,8 +21,6 @@ import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.elasticsearch.search.sort.SortOrder;
@@ -81,7 +73,7 @@ public class BookSearchApiService {
      * @return
      * @throws IOException
      */
-	public SearchResponse search(BookRequest bookRequest) throws IOException {
+	public ResponseVo search(BookRequest bookRequest) throws IOException {
 		SearchRequest searchRequest = new SearchRequest();
 		// 设置索引，索引可以为多个
 		searchRequest.indices(esconfig.getIndex());
@@ -103,32 +95,27 @@ public class BookSearchApiService {
 		build.timeout(TimeValue.timeValueMillis(2000));
 		// 设置查询条件
 //		build.query(QueryBuilders.matchAllQuery());
-		TermsQueryBuilder termbuild = QueryBuilders.termsQuery("type", "java");
-		MatchQueryBuilder matbuild = QueryBuilders.matchQuery("type", "java");
-		MatchQueryBuilder matbuild2 = QueryBuilders.matchQuery("edition", 3);
+		MatchQueryBuilder matbuild = QueryBuilders.matchQuery("title", bookRequest.getTitle());
+		MatchQueryBuilder matbuild1 = QueryBuilders.matchQuery("edition", bookRequest.getEdition());
 		// 按照时间范围查询
 		RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("publishDate")
-				.from("2008-08-01").includeLower(false)	// 相当于>
-				.to("2012-06-15").includeUpper(true);	// 相当于<=
-		
-		MatchQueryBuilder matbuild3 = QueryBuilders.matchQuery("title", "Spring")
-				// 启用模糊查询
-				.fuzziness(Fuzziness.AUTO)
-				// 匹配查询前缀长度
-				.prefixLength(3)
-				// 设置最大扩展选项以控制查询的模糊过程
-				.maxExpansions(20);
+				.from(bookRequest.getStartdate()).includeLower(false)	// 相当于>
+				.to(bookRequest.getEnddate()).includeUpper(true);	// 相当于<=
 		
 		BoolQueryBuilder boolbuild = new BoolQueryBuilder();
 		boolbuild
-		.must(matbuild)
-		.must(matbuild2)
+		.must(matbuild)			//  and 
+		.mustNot(matbuild1)		//  not
 		.must(rangeQueryBuilder);
-//		.must(matbuild3);
 		build.query(boolbuild);
 		searchRequest.source(build);
 		SearchResponse response = this.client.search(searchRequest);
-		return response;
+		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
+        for (SearchHit searchHit : response.getHits()) {
+            list.add(searchHit.getSourceAsMap());
+        }
+        long count = response.getHits().getTotalHits();
+		return ResponseVo.success(list, count);
 	}
 	
 	/**
@@ -165,7 +152,7 @@ public class BookSearchApiService {
 	}
 	
 	
-	public SearchResponse search1(BookRequest bookRequest) throws IOException {
+	public ResponseVo search1(BookRequest bookRequest) throws IOException {
 		SearchRequest searchRequest = new SearchRequest();
 		// 设置索引，索引可以为多个
 		searchRequest.indices(esconfig.getIndex());
@@ -200,7 +187,12 @@ public class BookSearchApiService {
 		build.query(boolbuild);
 		searchRequest.source(build);
 		SearchResponse response = this.client.search(searchRequest);
-		return response;
+		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
+        for (SearchHit searchHit : response.getHits()) {
+            list.add(searchHit.getSourceAsMap());
+        }
+        long count = response.getHits().getTotalHits();
+		return ResponseVo.success(list, count);
 	}
 	
 	/**
@@ -249,7 +241,7 @@ public class BookSearchApiService {
 	 * @return
 	 * @throws IOException
 	 */
-	public SearchResponse zhuheSearch(BookRequest bookRequest) throws IOException {
+	public ResponseVo zhuheSearch(BookRequest bookRequest) throws IOException {
 		SearchRequest searchRequest = new SearchRequest();
 		// 设置索引，索引可以为多个
 		searchRequest.indices(esconfig.getIndex());
@@ -272,13 +264,18 @@ public class BookSearchApiService {
 
 		BoolQueryBuilder matbuild3 = QueryBuilders.boolQuery()
 				.must(tqb1)
-				.mustNot(tqb2)
-				.should(tqb3);
+				/*.mustNot(tqb2)
+				.should(tqb3)*/;
 		
 		build.query(matbuild3);
 		searchRequest.source(build);
 		SearchResponse response = this.client.search(searchRequest);
-		return response;
+		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
+        for (SearchHit searchHit : response.getHits()) {
+            list.add(searchHit.getSourceAsMap());
+        }
+        long count = response.getHits().getTotalHits();
+		return ResponseVo.success(list, count);
 	}
 	
 	/**
@@ -304,7 +301,7 @@ public class BookSearchApiService {
 		// 设置超时时间
 		build.timeout(TimeValue.timeValueMillis(2000));
 		// 设置查询条件
-		MatchPhrasePrefixQueryBuilder pqb = QueryBuilders.matchPhrasePrefixQuery("title", "Elastic");
+		MatchPhrasePrefixQueryBuilder pqb = QueryBuilders.matchPhrasePrefixQuery("title", bookRequest.getTitle());
 
 		BoolQueryBuilder matbuild3 = QueryBuilders.boolQuery()
 				.must(pqb);
@@ -321,14 +318,6 @@ public class BookSearchApiService {
 	}
 	
 	
-	private List<Map<String, Object>> searchFunction(SearchResponse response) {
-		long totalHits = response.getHits().getTotalHits();
-		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
-        for (SearchHit searchHit : response.getHits()) {
-            list.add(searchHit.getSourceAsMap());
-            return list;
-        }
-        return list;
-    }
+
 	
 }

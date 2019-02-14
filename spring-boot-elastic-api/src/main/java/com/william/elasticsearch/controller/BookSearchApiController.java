@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.william.elasticsearch.model.BookRequest;
+import com.william.elasticsearch.model.ResponseVo;
 import com.william.elasticsearch.service.BookSearchApiService;
 
 /**
@@ -53,13 +54,13 @@ public class BookSearchApiController {
 	 */
 	@PostMapping("/searchall")
 	public ResponseEntity searchBook(@RequestBody BookRequest bookRequest) throws IOException {
-		SearchResponse response = service.search(bookRequest);
+		ResponseVo response = service.search(bookRequest);
 		return new ResponseEntity(response, HttpStatus.OK);
 	}
 	
 	@PostMapping("/searchBook1")
 	public ResponseEntity searchBook1(@RequestBody BookRequest bookRequest) throws IOException {
-		SearchResponse response = service.search1(bookRequest);
+		ResponseVo response = service.search1(bookRequest);
 		return new ResponseEntity(response, HttpStatus.OK);
 	}
 	
@@ -104,10 +105,16 @@ public class BookSearchApiController {
 		if(bookRequest.getWordCount()==null) {
 			return new ResponseEntity("wordCount不能为空", HttpStatus.BAD_REQUEST);
 		}
-		SearchResponse response = service.zhuheSearch(bookRequest);
-		return new ResponseEntity(response, HttpStatus.OK);
+		return new ResponseEntity(service.zhuheSearch(bookRequest), HttpStatus.OK);
 	}
 	
+	/**
+	 * @Title: prefixQuery
+	 * @Description: 根据前缀进行匹配查询
+	 * @param bookRequest
+	 * @return
+	 * @throws IOException
+	 */
 	@PostMapping("/prefixQuery")
 	public ResponseEntity prefixQuery(@RequestBody BookRequest bookRequest) throws IOException {
 		if(bookRequest.getTitle()==null) {
