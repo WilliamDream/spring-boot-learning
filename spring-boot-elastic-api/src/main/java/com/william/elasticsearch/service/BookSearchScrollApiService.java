@@ -65,7 +65,7 @@ public class BookSearchScrollApiService {
 		build.sort("publishDate", SortOrder.DESC);
 		// 设置超时时间
 		build.timeout(TimeValue.timeValueMillis(2000));
-		MatchQueryBuilder matbuild = QueryBuilders.matchQuery("edition", "4");
+		MatchQueryBuilder matbuild = QueryBuilders.matchQuery("edition", bookRequest.getEdition());
 		
 		BoolQueryBuilder boolbuild = new BoolQueryBuilder();
 		boolbuild.must(matbuild);
@@ -73,6 +73,7 @@ public class BookSearchScrollApiService {
 		build.query(boolbuild);
 		searchRequest.source(build);
 		SearchResponse response = this.client.search(searchRequest);
+		//读取返回的滚动id，它指向保持活动的搜索上下文，并且在接下来的搜索滚动调用中需要它
 		String scrollId = response.getScrollId();
 		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
 		SearchHit[] searchHits = response.getHits().getHits();
