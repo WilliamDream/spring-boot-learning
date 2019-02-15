@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.Header;
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.ClearScrollResponse;
+import org.elasticsearch.action.search.MultiSearchRequest;
+import org.elasticsearch.action.search.MultiSearchResponse;
+import org.elasticsearch.action.search.MultiSearchResponse.Item;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
@@ -23,10 +27,11 @@ import org.springframework.stereotype.Service;
 
 import com.william.elasticsearch.conf.EsConfig;
 import com.william.elasticsearch.model.BookRequest;
+import com.william.elasticsearch.model.RequestHeader;
 import com.william.elasticsearch.model.ResponseVo;
 
 /**
- * @author: chaiz
+ * @author: william
  * @Description: TODO
  * @date: 2019年2月14日 下午5:51:51
  * @version: v1.0.0
@@ -41,47 +46,38 @@ public class BookMultiSearchService {
     private RestHighLevelClient client;
 	
 	public ResponseVo multiSearch(BookRequest bookRequest) throws IOException {
-		SearchRequest searchRequest = new SearchRequest();
-		// 设置索引，索引可以为多个
-		searchRequest.indices(esconfig.getIndex());
-		// 设置类型，类型也可以为多个
-		searchRequest.types(esconfig.getType());
-		SearchSourceBuilder build = new SearchSourceBuilder();
-		//设置查询起始
-//		int  index = (bookRequest.getPageindex()-1)*bookRequest.getPagesize();
-//		build.from(index);	// 查询起始  (pageIndex-1)*pageSize
-//		build.size(bookRequest.getPagesize());	// 每页大小
-
-		// 设置排序规则
-		build.sort("publishDate", SortOrder.DESC);
-		// 设置超时时间
-		build.timeout(TimeValue.timeValueMillis(2000));
-		MatchQueryBuilder matbuild = QueryBuilders.matchQuery("edition", bookRequest.getEdition());
 		
-		BoolQueryBuilder boolbuild = new BoolQueryBuilder();
-		boolbuild.must(matbuild);
-		build.size(10000);
-		build.query(boolbuild);
-		searchRequest.source(build);
-		SearchResponse response = this.client.search(searchRequest);
-		//读取返回的滚动id，它指向保持活动的搜索上下文，并且在接下来的搜索滚动调用中需要它
-		String scrollId = response.getScrollId();
+		MultiSearchRequest multiRequest = new MultiSearchRequest();
+		
+		
+		SearchRequest firstSearchRequest = new SearchRequest();   
+		firstSearchRequest.indices(esconfig.getIndex());
+		firstSearchRequest.types(esconfig.getType());
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.query(QueryBuilders.matchQuery("title", "Python"));
+		firstSearchRequest.source(searchSourceBuilder);
+		multiRequest.add(firstSearchRequest); 
+		
+		SearchRequest secondSearchRequest = new SearchRequest();
+		secondSearchRequest.indices(esconfig.getIndex());
+		secondSearchRequest.types(esconfig.getType());
+		searchSourceBuilder = new SearchSourceBuilder();
+		searchSourceBuilder.query(QueryBuilders.matchQuery("title", "java"));
+		secondSearchRequest.source(searchSourceBuilder);
+		multiRequest.add(secondSearchRequest);
+		
+		MultiSearchResponse response = this.client.multiSearch(multiRequest, new RequestHeader());
 		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
-		SearchHit[] searchHits = response.getHits().getHits();
-
-		for (SearchHit searchHit : response.getHits()) {
-		    SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId); 
-		    response = client.searchScroll(scrollRequest);
-		    scrollId = response.getScrollId();
-		    searchHits = response.getHits().getHits();
-		    list.add(searchHit.getSourceAsMap());
+		for (Item item : response) {
+			long count = item.getResponse().getHits().getTotalHits();
+			System.out.println(count);
+			for (SearchHit searchHit : item.getResponse().getHits()) {
+			    list.add(searchHit.getSourceAsMap());
+			}
+			
 		}
-		ClearScrollRequest clearScrollRequest = new ClearScrollRequest(); 
-		clearScrollRequest.addScrollId(scrollId);
-		ClearScrollResponse clearScrollResponse = client.clearScroll(clearScrollRequest);
-		boolean succeeded = clearScrollResponse.isSucceeded();
-        long count = response.getHits().getTotalHits();
-		return ResponseVo.success(list, count);
+
+		return ResponseVo.success(list, 2);
 	}
 	
 }

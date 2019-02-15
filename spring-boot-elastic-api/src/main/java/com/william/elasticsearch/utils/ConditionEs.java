@@ -11,13 +11,9 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 * @Description: 该类的功能描述
 * 封装ES的查询条件逻辑,与,或
 * @version: v1.0.0
-* @author: chenhj
+* @author: william
 * @date: 2018年8月2日 上午11:11:16 
 *
-* Modification History:
-* Date         Author          Version            Description
-*---------------------------------------------------------*
-* 2018年8月2日     chenhj          v1.0.0               修改原因
 */
 public class ConditionEs {
 	private QueryBuilder queryBuilder=null;

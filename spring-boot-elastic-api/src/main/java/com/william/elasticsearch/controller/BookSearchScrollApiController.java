@@ -35,7 +35,7 @@ public class BookSearchScrollApiController {
 	 * @return
 	 * @throws IOException
 	 */
-	@PostMapping("/searchScrollBook")
+	@PostMapping("/searchScroll")
 	public ResponseEntity searchScrollBook(@RequestBody BookRequest bookRequest) throws IOException {
 		if(bookRequest.getEdition()==null) {
 			return new ResponseEntity("edition不能为空", HttpStatus.BAD_REQUEST);

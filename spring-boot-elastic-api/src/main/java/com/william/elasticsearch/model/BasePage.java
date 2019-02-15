@@ -3,7 +3,7 @@ package com.william.elasticsearch.model;
 import lombok.Data;
 
 /**
- * @author: chaiz
+ * @author: william
  * @Description: TODO
  * @date: 2018年12月12日 上午11:37:41
  * @version: v1.0.0

@@ -9,13 +9,9 @@ package com.william.elasticsearch.utils;
 * @Description: 该类的功能描述
 *	条件类型
 * @version: v1.0.0
-* @author: chenhj
+* @author: william
 * @date: 2018年8月2日 上午11:43:09 
 *
-* Modification History:
-* Date         Author          Version            Description
-*---------------------------------------------------------*
-* 2018年8月2日     chenhj          v1.0.0               修改原因
 */
 public enum ConditionType {
 	/****大于*********/

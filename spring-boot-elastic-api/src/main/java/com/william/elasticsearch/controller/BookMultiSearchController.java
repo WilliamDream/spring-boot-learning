@@ -29,7 +29,7 @@ public class BookMultiSearchController {
 	@Autowired
 	private BookMultiSearchService service;
 	
-	@PostMapping("/searchScrollBook")
+	@PostMapping("/multiSearch")
 	public ResponseEntity searchScrollBook(@RequestBody BookRequest bookRequest) throws IOException {
 		if(bookRequest.getEdition()==null) {
 			return new ResponseEntity("edition不能为空", HttpStatus.BAD_REQUEST);
