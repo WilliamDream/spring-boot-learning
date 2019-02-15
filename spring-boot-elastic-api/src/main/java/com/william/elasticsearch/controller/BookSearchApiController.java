@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,21 +48,39 @@ public class BookSearchApiController {
 	
 	/**
 	 * @Title: searchBook
-	 * @Description: TODO
+	 * @Description: 综合查询，带有分页，排序，范围，条件，过滤等
 	 * @param bookRequest
 	 * @return
 	 * @throws IOException
 	 */
 	@PostMapping("/searchall")
 	public ResponseEntity searchBook(@RequestBody BookRequest bookRequest) throws IOException {
-		ResponseVo response = service.search(bookRequest);
-		return new ResponseEntity(response, HttpStatus.OK);
+		return new ResponseEntity(service.search(bookRequest), HttpStatus.OK);
 	}
 	
 	@PostMapping("/searchBook1")
 	public ResponseEntity searchBook1(@RequestBody BookRequest bookRequest) throws IOException {
+		if(bookRequest.getTitle()==null||bookRequest.getTitle().isEmpty()) {
+			return new ResponseEntity("title不能为空", HttpStatus.BAD_REQUEST);
+		}
 		ResponseVo response = service.search1(bookRequest);
 		return new ResponseEntity(response, HttpStatus.OK);
+	}
+	
+	/**
+	 * 
+	 * @Title: multiMatch
+	 * @Description: 多字段匹配
+	 * @param bookRequest
+	 * @return
+	 * @throws IOException
+	 */
+	@PostMapping("/multiMatch")
+	public ResponseEntity multiMatch(@RequestBody BookRequest bookRequest) throws IOException {
+		if(bookRequest.getMatchText()==null||bookRequest.getMatchText().isEmpty()) {
+			return new ResponseEntity("matchText不能为空", HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity(service.multiMatch(bookRequest), HttpStatus.OK);
 	}
 	
 	/**
@@ -80,7 +99,7 @@ public class BookSearchApiController {
 	 */
 	@PostMapping("/likesearch")
 	public ResponseEntity likesearch(@RequestBody BookRequest bookRequest) throws IOException {
-		if(bookRequest.getTitle()==null) {
+		if(bookRequest.getTitle()==null||bookRequest.getTitle().isEmpty()) {
 			return new ResponseEntity("title不能为空", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity(service.likeSearch(bookRequest), HttpStatus.OK);
@@ -96,7 +115,7 @@ public class BookSearchApiController {
 	 */
 	@PostMapping("/zhuheSearch")
 	public ResponseEntity zhuheSearch(@RequestBody BookRequest bookRequest) throws IOException {
-		if(bookRequest.getTitle()==null) {
+		if(bookRequest.getTitle()==null||bookRequest.getTitle().isEmpty()) {
 			return new ResponseEntity("title不能为空", HttpStatus.BAD_REQUEST);
 		}
 		if(bookRequest.getEdition()==null) {
@@ -109,6 +128,9 @@ public class BookSearchApiController {
 	}
 	
 	/**
+	 * {
+		"title":"Elasticsearch Action"
+		}
 	 * @Title: prefixQuery
 	 * @Description: 根据前缀进行匹配查询
 	 * @param bookRequest
@@ -117,10 +139,32 @@ public class BookSearchApiController {
 	 */
 	@PostMapping("/prefixQuery")
 	public ResponseEntity prefixQuery(@RequestBody BookRequest bookRequest) throws IOException {
-		if(bookRequest.getTitle()==null) {
+		if(bookRequest.getTitle()==null||bookRequest.getTitle().isEmpty()) {
 			return new ResponseEntity("title不能为空", HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity(service.prefixQuery(bookRequest), HttpStatus.OK);
+	}
+	
+	/**
+	 * {
+		"field":"title",
+		"matchText":"mysql*"
+		}
+	 * @Title: reqexpMatch
+	 * @Description: 正则匹配查询,正则匹配feild字段
+	 * @param bookRequest
+	 * @return
+	 * @throws IOException
+	 */
+	@PostMapping("/reqexpMatch")
+	public ResponseEntity reqexpMatch(@RequestBody BookRequest bookRequest) throws IOException {
+		if(bookRequest.getField()==null||bookRequest.getField().isEmpty()) {
+			return new ResponseEntity("field不能为空", HttpStatus.BAD_REQUEST);
+		}
+		if(bookRequest.getMatchText()==null||bookRequest.getMatchText().isEmpty()) {
+			return new ResponseEntity("matchText不能为空", HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity(service.reqexpMatch(bookRequest), HttpStatus.OK);
 	}
 	
 	

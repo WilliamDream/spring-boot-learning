@@ -17,12 +17,14 @@ import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.index.query.RegexpQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,7 +75,7 @@ public class BookSearchApiService {
      * @return
      * @throws IOException
      */
-	public ResponseVo search(BookRequest bookRequest) throws IOException {
+	public SearchResponse search(BookRequest bookRequest) throws IOException {
 		SearchRequest searchRequest = new SearchRequest();
 		// 设置索引，索引可以为多个
 		searchRequest.indices(esconfig.getIndex());
@@ -82,8 +84,8 @@ public class BookSearchApiService {
 		SearchSourceBuilder build = new SearchSourceBuilder();
 		//设置查询起始
 		int  index = (bookRequest.getPageindex()-1)*bookRequest.getPagesize();
-//		build.from(index);	// 查询起始  (pageIndex-1)*pageSize
-//		build.size(bookRequest.getPagesize());	// 每页大小
+		build.from(index);	// 查询起始  (pageIndex-1)*pageSize
+		build.size(bookRequest.getPagesize());	// 每页大小
 		// 设置自动过滤
 		String[] includes = new String[] {"author","*e"};
     	String[] excludes = new String[] {"publishDate"};
@@ -100,12 +102,11 @@ public class BookSearchApiService {
 		// 按照时间范围查询
 		RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("publishDate")
 				.from(bookRequest.getStartdate()).includeLower(false)	// 相当于>
-				.to(bookRequest.getEnddate()).includeUpper(true);	// 相当于<=
-		
-		BoolQueryBuilder boolbuild = new BoolQueryBuilder();
+				.to(bookRequest.getEnddate()).includeUpper(true);		// 相当于<=
+		BoolQueryBuilder boolbuild = new BoolQueryBuilder();	//等价于：BoolQueryBuilder boolbuild = QueryBuilders.boolQuery();
 		boolbuild
 		.must(matbuild)			//  and 
-		.mustNot(matbuild1)		//  not
+//		.mustNot(matbuild1)		//  not
 		.must(rangeQueryBuilder);
 		build.query(boolbuild);
 		searchRequest.source(build);
@@ -115,17 +116,17 @@ public class BookSearchApiService {
             list.add(searchHit.getSourceAsMap());
         }
         long count = response.getHits().getTotalHits();
-		return ResponseVo.success(list, count);
+		return response;
 	}
 	
 	/**
-	 * @Title: searchMulti
-	 * @Description: TODO
+	 * @Title: multiMatch
+	 * @Description: 多字段匹配
 	 * @param bookRequest
 	 * @return
 	 * @throws IOException
 	 */
-	public SearchResponse searchMulti(BookRequest bookRequest) throws IOException {
+	public SearchResponse multiMatch(BookRequest bookRequest) throws IOException {
 		SearchRequest searchRequest = new SearchRequest();
 		// 设置索引，索引可以为多个
 		searchRequest.indices(esconfig.getIndex());
@@ -133,22 +134,27 @@ public class BookSearchApiService {
 		searchRequest.types(esconfig.getType());
 		SearchSourceBuilder build = new SearchSourceBuilder();
 		//设置查询起始
-		int  index = (bookRequest.getPageindex()-1)*bookRequest.getPagesize();
-		build.from(index);	// 查询起始  (pageIndex-1)*pageSize
-		build.size(bookRequest.getPagesize());	// 每页大小
+//		int  index = (bookRequest.getPageindex()-1)*bookRequest.getPagesize();
+//		build.from(index);	// 查询起始  (pageIndex-1)*pageSize
+//		build.size(bookRequest.getPagesize());	// 每页大小
 		// 设置排序规则
 		build.sort("publishDate", SortOrder.DESC);
 		// 设置超时时间
 		build.timeout(TimeValue.timeValueMillis(2000));
-		QueryBuilder queryBuilder = QueryBuilders.multiMatchQuery("", "","");
+		//QueryBuilders.multiMatchQuery(Object text, String... fieldNames);		text要匹配的内容，fieldNames要匹配那些字段
+		QueryBuilder queryBuilder = QueryBuilders.multiMatchQuery(bookRequest.getMatchText(), "title","desc");
 		
 		BoolQueryBuilder boolbuild = new BoolQueryBuilder();
 		boolbuild.must(queryBuilder);
 		build.query(boolbuild);
 		searchRequest.source(build);
 		SearchResponse response = this.client.search(searchRequest);
+		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
+        for (SearchHit searchHit : response.getHits()) {
+            list.add(searchHit.getSourceAsMap());
+        }
+        long count = response.getHits().getTotalHits();
 		return response;
-		
 	}
 	
 	
@@ -170,7 +176,7 @@ public class BookSearchApiService {
 		// 设置查询条件
 //		build.query(QueryBuilders.matchAllQuery());
 		
-		MatchQueryBuilder matbuild3 = QueryBuilders.matchQuery("title", "Spring")
+		MatchQueryBuilder matbuild3 = QueryBuilders.matchQuery("title", bookRequest.getTitle())
 				// 启用模糊查询
 				.fuzziness(Fuzziness.AUTO)
 				// 匹配查询前缀长度
@@ -257,17 +263,21 @@ public class BookSearchApiService {
 		// 设置超时时间
 		build.timeout(TimeValue.timeValueMillis(2000));
 		// 设置查询条件
-		
+		/**
+		 * QueryBuilders.termQuery("field","");				用于精确查询
+		 * QueryBuilders.termsQuery("field","","");			用于精确匹配多个值，相当于sql 语句：select * from books where type in in ("java","python")
+		 * 
+		 */
 		TermQueryBuilder tqb1 = QueryBuilders.termQuery("title", bookRequest.getTitle());
 		TermQueryBuilder tqb2 = QueryBuilders.termQuery("edition", bookRequest.getEdition());
 		TermQueryBuilder tqb3 = QueryBuilders.termQuery("wordCount", bookRequest.getWordCount());
 
-		BoolQueryBuilder matbuild3 = QueryBuilders.boolQuery()
+		BoolQueryBuilder boolbuild = QueryBuilders.boolQuery()
 				.must(tqb1)
 				/*.mustNot(tqb2)
 				.should(tqb3)*/;
 		
-		build.query(matbuild3);
+		build.query(boolbuild);
 		searchRequest.source(build);
 		SearchResponse response = this.client.search(searchRequest);
 		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
@@ -300,13 +310,16 @@ public class BookSearchApiService {
 		build.sort("publishDate", SortOrder.DESC);
 		// 设置超时时间
 		build.timeout(TimeValue.timeValueMillis(2000));
-		// 设置查询条件
+		// 根据前缀进行匹配检索
 		MatchPhrasePrefixQueryBuilder pqb = QueryBuilders.matchPhrasePrefixQuery("title", bookRequest.getTitle());
-
-		BoolQueryBuilder matbuild3 = QueryBuilders.boolQuery()
+		// slop参数告诉match_phrase_prefix查询词条之间相隔多远时仍然将文档视为匹配。一个词为一个slop，默认slop为0
+		pqb.slop(3)
+		.maxExpansions(50);
+		
+		BoolQueryBuilder boolbuild = QueryBuilders.boolQuery()
 				.must(pqb);
 		
-		build.query(matbuild3);
+		build.query(boolbuild);
 		searchRequest.source(build);
 		SearchResponse response = this.client.search(searchRequest);
 		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
@@ -317,7 +330,32 @@ public class BookSearchApiService {
 		return ResponseVo.success(list, count);
 	}
 	
-	
+	/**
+	 * @Title: reqexpMatch
+	 * @Description: 正则匹配查询,正则匹配field
+	 * @param bookRequest
+	 * @return
+	 * @throws IOException
+	 */
+	public ResponseVo reqexpMatch(BookRequest bookRequest) throws IOException {
+		SearchRequest searchRequest = new SearchRequest();
+		// 设置索引，索引可以为多个
+		searchRequest.indices(esconfig.getIndex());
+		// 设置类型，类型也可以为多个
+		searchRequest.types(esconfig.getType());
+		SearchSourceBuilder build = new SearchSourceBuilder();
+		// QueryBuilders.regexpQuery(String field, String regexp);
+		RegexpQueryBuilder reqexpbuild = QueryBuilders.regexpQuery(bookRequest.getField(), bookRequest.getMatchText()); 
+		build.query(reqexpbuild);
+		searchRequest.source(build);
+		SearchResponse response = this.client.search(searchRequest);
+		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
+        for (SearchHit searchHit : response.getHits()) {
+            list.add(searchHit.getSourceAsMap());
+        }
+        long count = response.getHits().getTotalHits();
+		return ResponseVo.success(list, count);
+	}
 
 	
 }

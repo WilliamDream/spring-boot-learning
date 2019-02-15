@@ -15,6 +15,8 @@ public class BookRequest extends BasePage{
 	
 	private String title;
 	
+	private String type;
+	
 	private String author;
 	
 	private Integer wordCount;
@@ -26,4 +28,13 @@ public class BookRequest extends BasePage{
 	private String startdate;
 	
 	private String enddate;
+	
+	//字段
+	private String field;
+	
+	//匹配内容
+	private String matchText;
+	
+	
+	
 }

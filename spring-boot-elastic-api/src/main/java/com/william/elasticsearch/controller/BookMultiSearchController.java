@@ -27,7 +27,7 @@ import com.william.elasticsearch.service.BookMultiSearchService;
 public class BookMultiSearchController {
 
 	@Autowired
-	private BookMultiSearchService Service;
+	private BookMultiSearchService service;
 	
 	@PostMapping("/searchScrollBook")
 	public ResponseEntity searchScrollBook(@RequestBody BookRequest bookRequest) throws IOException {
