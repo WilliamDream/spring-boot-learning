@@ -48,8 +48,6 @@ public class BookMultiSearchService {
 	public ResponseVo multiSearch(BookRequest bookRequest) throws IOException {
 		
 		MultiSearchRequest multiRequest = new MultiSearchRequest();
-		
-		
 		SearchRequest firstSearchRequest = new SearchRequest();   
 		firstSearchRequest.indices(esconfig.getIndex());
 		firstSearchRequest.types(esconfig.getType());
@@ -65,7 +63,7 @@ public class BookMultiSearchService {
 		searchSourceBuilder.query(QueryBuilders.matchQuery("title", "java"));
 		secondSearchRequest.source(searchSourceBuilder);
 		multiRequest.add(secondSearchRequest);
-		
+		// 此处要传Header
 		MultiSearchResponse response = this.client.multiSearch(multiRequest, new RequestHeader());
 		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
 		for (Item item : response) {
