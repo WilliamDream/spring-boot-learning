@@ -17,7 +17,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SearchConfig {
 
-    @Autowired EsConfig esConfig;
+    @Autowired 
+    EsConfig esConfig;
 
     private HttpHost[] esServers = new HttpHost[] {
 			new HttpHost("192.169.2.98", 9200, "http"),
@@ -25,8 +26,8 @@ public class SearchConfig {
 			new HttpHost("192.169.2.156", 9200, "http")
 	};
     
-    /*@Bean
-    public TransportClient client() throws UnknownHostException{
+    @Bean
+    public TransportClient transclient() throws UnknownHostException{
 
 
         TransportAddress node = new TransportAddress(
@@ -41,7 +42,7 @@ public class SearchConfig {
         TransportClient client = new PreBuiltTransportClient(settings);
         client.addTransportAddress(node);
         return client;
-    }*/
+    }
     
     @Bean
     public RestHighLevelClient client() {

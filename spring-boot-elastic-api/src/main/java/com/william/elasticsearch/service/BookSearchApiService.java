@@ -2,17 +2,31 @@ package com.william.elasticsearch.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.action.ActionFuture;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.bulk.BulkProcessor;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhrasePrefixQueryBuilder;
+import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -46,6 +60,9 @@ public class BookSearchApiService {
     @Autowired
     private RestHighLevelClient client;
 	
+//    @Autowired
+//    private TransportClient tranClient;
+    
     /**
      * @Title: searchByid
      * @Description: 根据ID查询
@@ -65,6 +82,9 @@ public class BookSearchApiService {
 		build.query(builder);
 		searchRequest.source(build);
 		SearchResponse response = this.client.search(searchRequest);
+		// 也可以使用TransportClient客户端
+//		ActionFuture<SearchResponse> searchresponse = this.tranClient.search(searchRequest);
+//		SearchResponse res = searchresponse.actionGet();
 		return response;
     }
     
@@ -75,7 +95,7 @@ public class BookSearchApiService {
      * @return
      * @throws IOException
      */
-	public SearchResponse search(BookRequest bookRequest) throws IOException {
+	public ResponseVo search(BookRequest bookRequest) throws IOException {
 		SearchRequest searchRequest = new SearchRequest();
 		// 设置索引，索引可以为多个
 		searchRequest.indices(esconfig.getIndex());
@@ -116,7 +136,7 @@ public class BookSearchApiService {
             list.add(searchHit.getSourceAsMap());
         }
         long count = response.getHits().getTotalHits();
-		return response;
+        return ResponseVo.success(list, count);
 	}
 	
 	/**
@@ -126,7 +146,7 @@ public class BookSearchApiService {
 	 * @return
 	 * @throws IOException
 	 */
-	public SearchResponse multiMatch(BookRequest bookRequest) throws IOException {
+	public ResponseVo multiMatch(BookRequest bookRequest) throws IOException {
 		SearchRequest searchRequest = new SearchRequest();
 		// 设置索引，索引可以为多个
 		searchRequest.indices(esconfig.getIndex());
@@ -154,7 +174,7 @@ public class BookSearchApiService {
             list.add(searchHit.getSourceAsMap());
         }
         long count = response.getHits().getTotalHits();
-		return response;
+		return ResponseVo.success(list, count);
 	}
 	
 	
@@ -311,16 +331,17 @@ public class BookSearchApiService {
 		// 设置超时时间
 		build.timeout(TimeValue.timeValueMillis(2000));
 		// 根据前缀进行匹配检索
-		MatchPhrasePrefixQueryBuilder pqb = QueryBuilders.matchPhrasePrefixQuery("title", bookRequest.getTitle());
+		MatchPhraseQueryBuilder pqb = QueryBuilders.matchPhraseQuery("title", bookRequest.getTitle());
 		// slop参数告诉match_phrase_prefix查询词条之间相隔多远时仍然将文档视为匹配。一个词为一个slop，默认slop为0
 		pqb.slop(3)
-		.maxExpansions(50);
+		/*.maxExpansions(50)*/;
 		
 		BoolQueryBuilder boolbuild = QueryBuilders.boolQuery()
 				.must(pqb);
 		
 		build.query(boolbuild);
 		searchRequest.source(build);
+		System.out.println(searchRequest.source());
 		SearchResponse response = this.client.search(searchRequest);
 		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
         for (SearchHit searchHit : response.getHits()) {
@@ -348,6 +369,7 @@ public class BookSearchApiService {
 		RegexpQueryBuilder reqexpbuild = QueryBuilders.regexpQuery(bookRequest.getField(), bookRequest.getMatchText()); 
 		build.query(reqexpbuild);
 		searchRequest.source(build);
+		System.out.println(searchRequest.toString());
 		SearchResponse response = this.client.search(searchRequest);
 		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
         for (SearchHit searchHit : response.getHits()) {
@@ -357,5 +379,40 @@ public class BookSearchApiService {
 		return ResponseVo.success(list, count);
 	}
 
+	/***
+	 * bulk api
+	 * @Title: bulkOperate
+	 * @Description: 批量操作接口，可是多个新增、修改、删除同时操作
+	 * @return
+	 * @throws IOException
+	 */
+	@SuppressWarnings("deprecation")
+	public BulkResponse bulkOperate() throws IOException {
+		BulkRequest bulkRequest = new BulkRequest();
+		
+		IndexRequest indexRequest = new IndexRequest(esconfig.getIndex(), esconfig.getType(), "12");
+		Map<String,String> adddoc = new HashMap<>();
+		adddoc.put("id", "12");
+		adddoc.put("title", "微服务实践之Dubbo");
+		adddoc.put("edition", "2");
+		adddoc.put("author", "alibaba");
+		adddoc.put("type", "java");
+		adddoc.put("wordCount", "500000");
+		adddoc.put("publishDate", "2015-01-01");
+		adddoc.put("desc", "dubbo study");
+		indexRequest.source(adddoc, XContentType.JSON);
+		
+		UpdateRequest updateRequest = new UpdateRequest(esconfig.getIndex(), esconfig.getType(), "9");
+		Map<String,String> editdoc = new HashMap<>();
+		editdoc.put("title","python开发入门");
+		updateRequest.doc(editdoc,XContentType.JSON);
+		
+		bulkRequest.add(indexRequest);
+		bulkRequest.add(updateRequest);
+		
+		BulkResponse blukresponse = this.client.bulk(bulkRequest);
+		return blukresponse;
+	}
+	
 	
 }

@@ -5,29 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.elasticsearch.action.search.ClearScrollRequest;
-import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.MultiSearchResponse.Item;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.william.elasticsearch.conf.EsConfig;
 import com.william.elasticsearch.model.BookRequest;
-import com.william.elasticsearch.model.RequestHeader;
 import com.william.elasticsearch.model.ResponseVo;
 
 /**
@@ -44,6 +35,10 @@ public class BookMultiSearchService {
 
     @Autowired
     private RestHighLevelClient client;
+    
+    @Autowired
+    private TransportClient tranClient;
+    
 	
 	public ResponseVo multiSearch(BookRequest bookRequest) throws IOException {
 		
@@ -64,7 +59,7 @@ public class BookMultiSearchService {
 		secondSearchRequest.source(searchSourceBuilder);
 		multiRequest.add(secondSearchRequest);
 		// 此处要传Header
-		MultiSearchResponse response = this.client.multiSearch(multiRequest, new RequestHeader());
+		MultiSearchResponse response = this.client.multiSearch(multiRequest);
 		List<Map<String, Object>>  list = new ArrayList<Map<String, Object>>();
 		for (Item item : response) {
 			long count = item.getResponse().getHits().getTotalHits();

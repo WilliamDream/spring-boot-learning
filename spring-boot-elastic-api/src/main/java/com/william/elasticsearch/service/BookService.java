@@ -9,7 +9,6 @@ import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -20,6 +19,7 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -122,12 +122,12 @@ public class BookService {
      * @return
      * @throws IOException 
      */
-    public DeleteIndexResponse deleteIndex(String indexName) throws IOException {
+    public AcknowledgedResponse deleteIndex(String indexName) throws IOException {
     	DeleteIndexRequest request = new DeleteIndexRequest(indexName);
     	// 可选参数
     	request.timeout(TimeValue.timeValueMillis(5000));
     	// 方式一：同步删除
-    	DeleteIndexResponse response = this.client.indices().delete(request);
+    	AcknowledgedResponse response = this.client.indices().delete(request);
     	// 方式二：异步删除
     	/*ActionListener<DeleteIndexResponse> listener =
     	        new ActionListener<DeleteIndexResponse>() {
@@ -142,6 +142,7 @@ public class BookService {
     	    }
     	};
     	this.client.indices().deleteAsync(request, listener);*/
+    	System.out.println(response.isAcknowledged());
     	return response;
     }
     

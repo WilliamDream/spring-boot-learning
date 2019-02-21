@@ -167,5 +167,15 @@ public class BookSearchApiController {
 		return new ResponseEntity(service.reqexpMatch(bookRequest), HttpStatus.OK);
 	}
 	
-	
+	/***
+	 * bulk api
+	 * @Title: bulkOperate
+	 * @Description: 批量操作接口，可是多个新增、修改、删除同时操作
+	 * @return
+	 * @throws IOException
+	 */
+	@PostMapping("/bulkOperate")
+	public ResponseEntity prefixQuery() throws IOException {
+		return new ResponseEntity(service.bulkOperate(), HttpStatus.OK);
+	}
 }

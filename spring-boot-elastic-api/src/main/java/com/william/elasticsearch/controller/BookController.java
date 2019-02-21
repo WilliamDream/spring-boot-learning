@@ -3,17 +3,16 @@ package com.william.elasticsearch.controller;
 import java.io.IOException;
 
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +30,7 @@ import com.william.elasticsearch.service.BookService;
  * @version: v1.0.0
  */
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/bookindex")
 public class BookController {
 
 	@Autowired
@@ -72,8 +71,7 @@ public class BookController {
 	 */
 	@GetMapping("delindex")
 	public ResponseEntity delIndex(@RequestParam(name = "index") String indexName) throws IOException {
-		DeleteIndexResponse response = service.deleteIndex(indexName);
-		return new ResponseEntity(response, HttpStatus.OK);
+		return new ResponseEntity(service.deleteIndex(indexName), HttpStatus.OK);
 	}
 	
 	/**
