@@ -1,6 +1,8 @@
-package com.william.elasticsearch.model;
+package com.william.elaticsearch.model;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 
@@ -21,8 +23,9 @@ public class ResponseVo {
 	
 	private long count;
 
-	private Object data;
+	private List<Map<String, Object>> data;
 	
+	private float consumetime;
 
 	public ResponseVo() {
 		
@@ -31,13 +34,14 @@ public class ResponseVo {
 	/**
 	 * 成功
 	 */
-	public static ResponseVo success(Object data, long count) {
+	public static ResponseVo success(List<Map<String, Object>> data, long count, float consumetime) {
 		String errmsg = "请求返回成功";
 		ResponseVo responseVo = new ResponseVo();
 		responseVo.setErrcode(0);
 		responseVo.setErrmsg(errmsg);
 		responseVo.setCount(count);
 		responseVo.setData(data);
+		responseVo.setConsumetime(consumetime);
 		return responseVo;
 	}
 	
@@ -54,39 +58,6 @@ public class ResponseVo {
 		return responseVo;
 	}
 
-
-
-	public String getErrmsg() {
-		return errmsg;
-	}
-
-	public void setErrmsg(String errmsg) {
-		this.errmsg = errmsg;
-	}
-
-	public int getErrcode() {
-		return errcode;
-	}
-
-	public void setErrcode(int errcode) {
-		this.errcode = errcode;
-	}
-
-	public long getCount() {
-		return count;
-	}
-
-	public void setCount(long count) {
-		this.count = count;
-	}
-
-	public Object getData() {
-		return data;
-	}
-
-	public void setData(Object data) {
-		this.data = data;
-	}
 
 	
 }

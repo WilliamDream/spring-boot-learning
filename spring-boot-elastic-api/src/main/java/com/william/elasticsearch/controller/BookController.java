@@ -45,8 +45,7 @@ public class BookController {
 	 */
 	@GetMapping("/index")
 	public ResponseEntity createIndex(@RequestParam(name = "index") String indexName) throws IOException {
-		CreateIndexResponse response = service.CreateIndex(indexName);
-		return new ResponseEntity(response, HttpStatus.OK);
+		return new ResponseEntity(service.CreateIndex(indexName), HttpStatus.OK);
 	}
 	
 	/**

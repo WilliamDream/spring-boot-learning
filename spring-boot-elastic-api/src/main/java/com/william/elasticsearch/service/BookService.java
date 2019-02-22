@@ -11,6 +11,7 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -22,6 +23,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.Strings;
@@ -58,13 +61,14 @@ public class BookService {
      * @Title: CreateIndex
      * @Description: 创建索引
      */
-    public CreateIndexResponse CreateIndex(String indexName) throws IOException {
-    	CreateIndexRequest request = new CreateIndexRequest(indexName);
+    @SuppressWarnings("deprecation")
+	public AcknowledgedResponse CreateIndex(String indexName) throws IOException {
+    	CreateIndexRequest request = new CreateIndexRequest("wechat");
     	request.settings(Settings.builder().put("number_of_shards", 3)	// 分片数
     		.put("number_of_replicas", 1));			// 副本数
     	// 3、设置索引的mappings
     	// 方式一
-        request.mapping("_doc",
+        /*request.mapping("_doc",
                 "  {\n" +
                 "    \"_doc\": {\n" +
                 "      \"properties\": {\n" +
@@ -74,30 +78,30 @@ public class BookService {
                 "      }\n" +
                 "    }\n" +
                 "  }",
-                XContentType.JSON);
+                XContentType.JSON);*/
     	
     	// 方式二
-/*    	XContentBuilder  builder = XContentFactory.jsonBuilder();
-    	builder.startObject();
-    	{
-    		builder.startObject("_doc");
-    		{
-    			builder.startObject("properties");
-    			{
-    				builder.startObject("message");
-    				{
-    					builder.field("type");
-    				}
-    				builder.endObject();
-    			}
-    			builder.endObject();
-    		}
-    		builder.endObject();
-    	}
-    	builder.endObject();
-    	request.mapping("_doc", builder);*/
-    	CreateIndexResponse response = this.client.indices().create(request);
-    	System.out.println(response.isAcknowledged()+"--"+response.isShardsAcknowledged());
+        XContentBuilder  builder = XContentFactory.jsonBuilder();
+        builder
+        .startObject()
+    		.startObject("nearbyuser")
+	            .startObject("properties")
+	                //微信号（唯一的索引）  keyword  text
+	                .startObject("wechatno").field("type", "keyword").endObject()
+	                //昵称
+	                .startObject("nickname").field("type", "keyword").endObject()
+	                //性别
+	                .startObject("gender").field("type","keyword").endObject()
+	                //位置，专门用来存储地理坐标的类型，包含了经度和纬度
+	                .startObject("location").field("type", "geo_point").endObject()
+		        .endObject()
+	        .endObject()
+	    .endObject();
+    	request.mapping("wechat", builder);
+    	PutMappingRequest putMapping = Requests.putMappingRequest("wechat").type("nearbyuser").source(builder);
+    	AcknowledgedResponse response = this.client.indices().putMapping(putMapping);
+//    	CreateIndexResponse response = this.client.indices().create(request);
+//    	System.out.println(response.isAcknowledged()+"--"+response.isShardsAcknowledged());
     	return response;
     }
     
