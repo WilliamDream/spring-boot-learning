@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.william.elaticsearch.service.SearchNearbyPeopleService;
 
 /**
- * @author: chaiz
+ * @author: william
  * @Description: 基于GEO模拟微信搜索附近的人
  * @date: 2019年2月22日 下午4:01:57
  * @version: v1.0.0
