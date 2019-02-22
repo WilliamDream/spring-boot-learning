@@ -26,5 +26,7 @@ public class EsConfig {
     private String index;
     @Value("${es.type}")
     private String type;
+    @Value("${es.scheme}")
+    private String scheme;
 }
 

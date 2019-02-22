@@ -1,7 +1,10 @@
 package com.william.elasticsearch.conf;
 
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -20,33 +23,35 @@ public class SearchConfig {
     @Autowired 
     EsConfig esConfig;
 
-    private HttpHost[] esServers = new HttpHost[] {
-			new HttpHost("192.169.2.98", 9200, "http"),
-			new HttpHost("192.169.2.188", 9200, "http"),
-			new HttpHost("192.169.2.156", 9200, "http")
-	};
-    
     @Bean
     public TransportClient transclient() throws UnknownHostException{
-
-
-        TransportAddress node = new TransportAddress(
-                InetAddress.getByName(esConfig.getIp()),
-                esConfig.getPort()
-        );
+    	String[] ips = esConfig.getIp().split(",");
+    	TransportAddress[] noedes = new TransportAddress[ips.length];
+    	for (int i = 0; i < ips.length; i++) {
+    		noedes[i] = new TransportAddress(InetAddress.getByName(ips[i]), esConfig.getPort());
+		}
+//        TransportAddress node = new TransportAddress(
+//                InetAddress.getByName(esConfig.getIp()),
+//                esConfig.getPort()
+//        );
 
         Settings settings = Settings.builder()
                 .put("cluster.name",esConfig.getClusterName())
                 .build();
 
         TransportClient client = new PreBuiltTransportClient(settings);
-        client.addTransportAddress(node);
+        client.addTransportAddresses(noedes);
         return client;
     }
     
     @Bean
     public RestHighLevelClient client() {
-    	RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(esServers));
+    	String[] ips = esConfig.getIp().split(",");
+    	List<HttpHost> hostlist = new ArrayList<>();
+    	for (int i=0;i<ips.length;i++) {
+    		hostlist.add(new HttpHost(ips[i], 9200, esConfig.getScheme()));
+		}
+    	RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(hostlist.toArray(new HttpHost[hostlist.size()])));
 		return client;
     }
     

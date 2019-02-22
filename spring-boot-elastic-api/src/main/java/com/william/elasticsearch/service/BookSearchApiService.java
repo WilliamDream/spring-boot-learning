@@ -379,40 +379,7 @@ public class BookSearchApiService {
 		return ResponseVo.success(list, count);
 	}
 
-	/***
-	 * bulk api
-	 * @Title: bulkOperate
-	 * @Description: 批量操作接口，可是多个新增、修改、删除同时操作
-	 * @return
-	 * @throws IOException
-	 */
-	@SuppressWarnings("deprecation")
-	public BulkResponse bulkOperate() throws IOException {
-		BulkRequest bulkRequest = new BulkRequest();
-		
-		IndexRequest indexRequest = new IndexRequest(esconfig.getIndex(), esconfig.getType(), "12");
-		Map<String,String> adddoc = new HashMap<>();
-		adddoc.put("id", "12");
-		adddoc.put("title", "微服务实践之Dubbo");
-		adddoc.put("edition", "2");
-		adddoc.put("author", "alibaba");
-		adddoc.put("type", "java");
-		adddoc.put("wordCount", "500000");
-		adddoc.put("publishDate", "2015-01-01");
-		adddoc.put("desc", "dubbo study");
-		indexRequest.source(adddoc, XContentType.JSON);
-		
-		UpdateRequest updateRequest = new UpdateRequest(esconfig.getIndex(), esconfig.getType(), "9");
-		Map<String,String> editdoc = new HashMap<>();
-		editdoc.put("title","python开发入门");
-		updateRequest.doc(editdoc,XContentType.JSON);
-		
-		bulkRequest.add(indexRequest);
-		bulkRequest.add(updateRequest);
-		
-		BulkResponse blukresponse = this.client.bulk(bulkRequest);
-		return blukresponse;
-	}
+
 	
 	
 }

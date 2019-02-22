@@ -10,6 +10,8 @@
   	<module>spring-boot-batch</module>
     <module>spring-boot-elastic-crud</module>
     <module>spring-boot-elastic-api</module>
+    <module>spring-boot-elastic_nearby</module>
+    <module>spring-boot-elastic-nearby</module>
   </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
