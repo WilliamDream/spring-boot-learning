@@ -2,7 +2,9 @@ package com.william.elaticsearch.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +60,7 @@ public class SearchNearbyPeopleService {
 	private RestHighLevelClient client;
 	
 	
-    public AcknowledgedResponse createIndex() throws IOException {
+    public AcknowledgedResponse createMapping() throws IOException {
     	CreateIndexRequest request = new CreateIndexRequest();
     	request.settings(Settings.builder().put("number_of_shards", 3)	// 分片数
     		.put("number_of_replicas", 1));			// 副本数
@@ -71,11 +73,14 @@ public class SearchNearbyPeopleService {
 	                //微信号（唯一的索引）  keyword  text
 	                .startObject("wechatno").field("type", "keyword").endObject()
 	                //昵称
-	                .startObject("nickname").field("type", "keyword").endObject()
+	                .startObject("nickname").field("type", "text").endObject()
 	                //性别
 	                .startObject("gender").field("type","keyword").endObject()
 	                //位置，专门用来存储地理坐标的类型，包含了经度和纬度
 	                .startObject("location").field("type", "geo_point").endObject()
+	                .startObject("birthday").field("type", "date").endObject()
+	                .startObject("age").field("type", "integer").endObject()
+	                .startObject("province").field("type", "text").endObject()
 		        .endObject()
 	        .endObject()
 	    .endObject();
@@ -192,7 +197,13 @@ public class SearchNearbyPeopleService {
 		String gender = RandomUtil.randomSex();
 		String nickname = RandomUtil.randomNickName(gender);
 		double[] point = RandomUtil.randomPoint(yourLat, yourLon);
-		return new UserInfo(wechatno, nickname, gender, point[0], point[1]);
+		String birthday = RandomUtil.randomBirthday();
+		String year = birthday.substring(0, 4);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String nowyear = sdf.format(new Date()).substring(0, 4);
+		int age = Integer.parseInt(nowyear)-Integer.parseInt(year);
+		String privince = RandomUtil.randomProvince();
+		return new UserInfo(wechatno, nickname, gender, point[0], point[1],birthday,age,privince);
 	}
 	
 	private XContentBuilder obj2XContent(UserInfo userInfo) {
@@ -207,6 +218,9 @@ public class SearchNearbyPeopleService {
 			.field("lat", userInfo.getLat())
 			.field("lon", userInfo.getLon())
 			.endObject()
+			.field("birthday", userInfo.getBirthday())
+			.field("age", userInfo.getAge())
+			.field("province", userInfo.getProvince())
 			.endObject();
 		} catch (IOException e) {
 			e.printStackTrace();

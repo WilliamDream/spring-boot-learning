@@ -20,6 +20,12 @@ public class UserInfo {
 	private double lat;
 	
 	private double lon;
+	
+	private String birthday;
+	
+	private int age;
+	
+	private String province;
 
 	/**
 	 * @param wechatno
@@ -28,13 +34,16 @@ public class UserInfo {
 	 * @param lat
 	 * @param lon
 	 */
-	public UserInfo(String wechatno, String nickname, String gender, double lat, double lon) {
+	public UserInfo(String wechatno, String nickname, String gender, double lat, double lon, String birthday,int age, String province) {
 		super();
 		this.wechatno = wechatno;
 		this.nickname = nickname;
 		this.gender = gender;
 		this.lat = lat;
 		this.lon = lon;
+		this.birthday = birthday;
+		this.age = age;
+		this.province = province;
 	}
 	
 	

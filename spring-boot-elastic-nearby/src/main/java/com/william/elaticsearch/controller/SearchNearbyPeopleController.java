@@ -28,12 +28,15 @@ public class SearchNearbyPeopleController {
 	
 	@GetMapping("/createmapping")
 	public ResponseEntity createIndex() throws IOException {
-		return new ResponseEntity(service.createIndex(), HttpStatus.OK);
+		return new ResponseEntity(service.createMapping(), HttpStatus.OK);
 	}
 	
 	@GetMapping("/createdata")
 	public ResponseEntity createData() throws IOException {
-		return new ResponseEntity(service.createBulkData(22.548732,113.941607, 500), HttpStatus.OK);
+		long s = System.currentTimeMillis();
+		ResponseEntity entity = new ResponseEntity(service.createBulkData(22.548732,113.941607, 5000), HttpStatus.OK);
+		System.out.println((System.currentTimeMillis()-s));
+		return entity;
 	}
 	
 	
