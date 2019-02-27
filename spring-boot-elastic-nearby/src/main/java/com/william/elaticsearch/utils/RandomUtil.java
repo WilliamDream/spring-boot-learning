@@ -19,7 +19,6 @@ import org.omg.CORBA.PRIVATE_MEMBER;
 public class RandomUtil {
 
 	private static Random random = new Random();
-	private static final char [] sexs = "男女".toCharArray();
 	private static final char [] wxNo = "abcdefghijklmnopqrstuvwxyz0123456789".toLowerCase().toCharArray();
 	private static final char [] firstName = "赵钱孙李周吴郑王冯陈卫蒋沈韩杨朱秦许何吕施张孔曹严金魏陶姜谢邹窦章苏潘葛范彭谭夏胡".toCharArray();
 	private static final String [] province = {"北京","安徽","福建","甘肃","广东","广西","贵州","海南","河北","河南","黑龙江","湖北",
@@ -33,9 +32,8 @@ public class RandomUtil {
 	 * 随机生成性别
 	 * @return
 	 */
-	public static String randomSex(){
-		int i = random.nextInt(sexs.length);
-		return ("" + sexs[i]);
+	public static short randomSex(){
+		return (short) random.nextInt(2);
 	}
 	
 	/**
@@ -86,9 +84,9 @@ public class RandomUtil {
 	 * 随机生成司机姓名
 	 * @return
 	 */
-	public static String randomNickName(String sex){
+	public static String randomNickName(short gender){
 		int i = random.nextInt(firstName.length);
-		return firstName[i] + ("男".equals(sex) ? "帅哥" : "美女");
+		return firstName[i] + (gender==1 ? "帅哥" : "美女");
 	}
 	
 	/**

@@ -15,7 +15,7 @@ public class UserInfo {
 	
 	private String nickname;
 	
-	private String gender;
+	private short gender;
 	
 	private double lat;
 	
@@ -34,7 +34,7 @@ public class UserInfo {
 	 * @param lat
 	 * @param lon
 	 */
-	public UserInfo(String wechatno, String nickname, String gender, double lat, double lon, String birthday,int age, String province) {
+	public UserInfo(String wechatno, String nickname, short gender, double lat, double lon, String birthday,int age, String province) {
 		super();
 		this.wechatno = wechatno;
 		this.nickname = nickname;

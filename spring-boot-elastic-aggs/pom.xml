@@ -9,11 +9,11 @@
   </parent>
   <groupId>com.william.elasticsearchaggs</groupId>
   <artifactId>spring-boot-elastic-aggs</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <name>spring-boot-elastic-aggs</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <elasticsearch.version>6.5.4</elasticsearch.version>
   </properties>
   <dependencies>
      <dependency>
@@ -28,7 +28,7 @@
   	<dependency>
 	    <groupId>org.elasticsearch.client</groupId>
 	    <artifactId>elasticsearch-rest-high-level-client</artifactId>
-	    <version>6.5.4</version>
+	    <version>${elasticsearch.version}</version>
 	</dependency>
     <dependency>
       <groupId>junit</groupId>

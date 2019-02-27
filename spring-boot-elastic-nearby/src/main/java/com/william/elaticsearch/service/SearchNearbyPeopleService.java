@@ -75,7 +75,7 @@ public class SearchNearbyPeopleService {
 	                //昵称
 	                .startObject("nickname").field("type", "text").endObject()
 	                //性别
-	                .startObject("gender").field("type","keyword").endObject()
+	                .startObject("gender").field("type","short").endObject()
 	                //位置，专门用来存储地理坐标的类型，包含了经度和纬度
 	                .startObject("location").field("type", "geo_point").endObject()
 	                .startObject("birthday").field("type", "date").endObject()
@@ -194,7 +194,7 @@ public class SearchNearbyPeopleService {
 	
 	private UserInfo generateWechatUser(double yourLat,double yourLon) {
 		String wechatno = RandomUtil.randomWechatNo();
-		String gender = RandomUtil.randomSex();
+		short gender = RandomUtil.randomSex();
 		String nickname = RandomUtil.randomNickName(gender);
 		double[] point = RandomUtil.randomPoint(yourLat, yourLon);
 		String birthday = RandomUtil.randomBirthday();
