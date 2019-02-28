@@ -9,20 +9,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.william.elasticsearchaggs.service.UserInfoGenerateDataService;
+import com.william.elasticsearchaggs.service.BookGenerateDateService;
 
 /**
  * @author: william
  * @Description: TODO
- * @date: 2019年2月26日 下午7:05:37
+ * @date: 2019年2月28日 下午2:57:32
  * @version: v1.0.0
  */
 @RestController
-@RequestMapping("/userindex")
-public class UserInfoIndexController {
+@RequestMapping("/bookindex")
+public class BookIndexController {
 
 	@Autowired
-	private UserInfoGenerateDataService service;
+	private BookGenerateDateService service;
+	
 	
 	@GetMapping("/createmapping")
 	public ResponseEntity createIndex() throws IOException {

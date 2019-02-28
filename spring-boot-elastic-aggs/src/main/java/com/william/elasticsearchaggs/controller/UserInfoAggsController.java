@@ -2,6 +2,9 @@ package com.william.elasticsearchaggs.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,5 +76,7 @@ public class UserInfoAggsController {
 	public ResponseEntity getGpGenderSumAge() throws IOException {
 		return new ResponseEntity(service.getMaxMinAge(), HttpStatus.OK);
 	}
+	
+
 	
 }

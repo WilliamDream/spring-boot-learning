@@ -1,43 +1,28 @@
 package com.william.elasticsearchaggs.service;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Random;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.BucketOrder;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.avg.AvgAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.max.MaxAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.min.MinAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.sum.SumAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder.Order;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.william.elasticsearchaggs.conf.EsConfig;
 
-
 /**
  * @author: william
- * @Description: avg,max,min聚合
- * @date: 2019年2月26日 上午10:22:15
+ * @Description: TODO
+ * @date: 2019年2月28日 下午3:30:14
  * @version: v1.0.0
  */
-@Service
-public class UserInfoAggsSerivce {
+public class BooksAggsService {
 
 	@Autowired
 	private EsConfig esconfig;
@@ -171,8 +156,5 @@ public class UserInfoAggsSerivce {
 		
 		return response;
 	}
-	
-
-
 	
 }

@@ -55,7 +55,7 @@ public class UserInfoGenerateDataService {
 	private RestHighLevelClient client;
 	
 	
-    public AcknowledgedResponse createIndex() throws IOException {
+    public AcknowledgedResponse createMapping() throws IOException {
     	CreateIndexRequest request = new CreateIndexRequest();
     	request.settings(Settings.builder().put("number_of_shards", 3)	// 分片数
     		.put("number_of_replicas", 1));			// 副本数
@@ -63,7 +63,7 @@ public class UserInfoGenerateDataService {
     	XContentBuilder  builder = XContentFactory.jsonBuilder();
         builder
         .startObject()
-    		.startObject("nearbyuser")
+    		.startObject(esconfig.getType())
 	            .startObject("properties")
 	                //微信号（唯一的索引）  keyword  text
 	                .startObject("wechatno").field("type", "keyword").endObject()
