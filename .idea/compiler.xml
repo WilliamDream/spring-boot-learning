@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="spring-boot-batch" />
+        <module name="spring-boot-elastic-aggs" />
+        <module name="spring-boot-elastic-api" />
+        <module name="spring-boot-elastic-crud" />
+        <module name="spring-boot-elastic-nearby" />
+        <module name="spring-boot-export" />
+        <module name="spring-boot-mongodb" />
+        <module name="spring-boot-Security" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="spring-boot-batch" target="1.8" />
+      <module name="spring-boot-elastic-aggs" target="1.8" />
+      <module name="spring-boot-elastic-api" target="1.8" />
+      <module name="spring-boot-elastic-crud" target="1.8" />
+      <module name="spring-boot-elastic-nearby" target="1.8" />
+      <module name="spring-boot-export" target="1.8" />
+      <module name="spring-boot-learning" target="1.8" />
+      <module name="spring-boot-mongodb" target="1.8" />
+      <module name="spring-boot-Security" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

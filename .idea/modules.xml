@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-Security/spring-boot-Security.iml" filepath="$PROJECT_DIR$/spring-boot-Security/spring-boot-Security.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-batch/spring-boot-batch.iml" filepath="$PROJECT_DIR$/spring-boot-batch/spring-boot-batch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-elastic-aggs/spring-boot-elastic-aggs.iml" filepath="$PROJECT_DIR$/spring-boot-elastic-aggs/spring-boot-elastic-aggs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-elastic-api/spring-boot-elastic-api.iml" filepath="$PROJECT_DIR$/spring-boot-elastic-api/spring-boot-elastic-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-elastic-crud/spring-boot-elastic-crud.iml" filepath="$PROJECT_DIR$/spring-boot-elastic-crud/spring-boot-elastic-crud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-elastic-nearby/spring-boot-elastic-nearby.iml" filepath="$PROJECT_DIR$/spring-boot-elastic-nearby/spring-boot-elastic-nearby.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-export/spring-boot-export.iml" filepath="$PROJECT_DIR$/spring-boot-export/spring-boot-export.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-learning.iml" filepath="$PROJECT_DIR$/spring-boot-learning.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-mongodb/spring-boot-mongodb.iml" filepath="$PROJECT_DIR$/spring-boot-mongodb/spring-boot-mongodb.iml" />
+    </modules>
+  </component>
+</project>
