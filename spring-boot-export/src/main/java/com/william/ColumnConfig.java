@@ -32,8 +32,6 @@ public class ColumnConfig implements Comparable<ColumnConfig>{
 
     /**
      *
-     * 作者:sanri <br/>
-     * 时间:2017-8-12下午2:56:02<br/>
      * 功能:配置所有的配置,如果传入值为非默认值,则配置 <br/>
      * @param chinese
      * @param width
@@ -56,6 +54,14 @@ public class ColumnConfig implements Comparable<ColumnConfig>{
             this.pattern = pattern;
         }
         this.chineseWidth = chineseWidth;
+    }
+
+    @Override
+    public int compareTo(ColumnConfig o) {
+        if(this.index != -1 && o.index != -1){
+            return this.index - o.index;
+        }
+        return this.propertyName.compareTo(o.propertyName);
     }
 
     public boolean isHidden() {
@@ -122,13 +128,6 @@ public class ColumnConfig implements Comparable<ColumnConfig>{
         this.writeMethod = writeMethod;
     }
 
-    @Override
-    public int compareTo(ColumnConfig o) {
-        if(this.index != -1 && o.index != -1){
-            return this.index - o.index;
-        }
-        return this.propertyName.compareTo(o.propertyName);
-    }
 
     public Class<?> getDataType() {
         return dataType;
