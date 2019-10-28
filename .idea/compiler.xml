@@ -14,6 +14,7 @@
         <module name="spring-boot-export" />
         <module name="spring-boot-mongodb" />
         <module name="spring-boot-Security" />
+        <module name="spring-boot-validation" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -26,6 +27,7 @@
       <module name="spring-boot-learning" target="1.8" />
       <module name="spring-boot-mongodb" target="1.8" />
       <module name="spring-boot-Security" target="1.8" />
+      <module name="spring-boot-validation" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

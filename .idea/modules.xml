@@ -11,6 +11,7 @@
       <module fileurl="file://$PROJECT_DIR$/spring-boot-export/spring-boot-export.iml" filepath="$PROJECT_DIR$/spring-boot-export/spring-boot-export.iml" />
       <module fileurl="file://$PROJECT_DIR$/spring-boot-learning.iml" filepath="$PROJECT_DIR$/spring-boot-learning.iml" />
       <module fileurl="file://$PROJECT_DIR$/spring-boot-mongodb/spring-boot-mongodb.iml" filepath="$PROJECT_DIR$/spring-boot-mongodb/spring-boot-mongodb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-validation/spring-boot-validation.iml" filepath="$PROJECT_DIR$/spring-boot-validation/spring-boot-validation.iml" />
     </modules>
   </component>
 </project>
