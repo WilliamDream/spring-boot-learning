@@ -1,8 +1,6 @@
 package com.william.springbootvalidation.controller;
 
 import com.william.springbootvalidation.model.UserInfo;
-import com.william.springbootvalidation.model.UserInster;
-import com.william.springbootvalidation.model.UserUpdate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,13 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserInfoController {
 
     @PostMapping("/add")
-    public String addUser(@RequestBody @Validated({UserInster.class})UserInfo userInfo){
+    public String addUser(@RequestBody @Validated({UserInfo.Default.class})UserInfo userInfo){
+        System.out.println("名字"+userInfo.getName());
         System.out.println("新增");
         return "";
     }
 
     @PostMapping("/update")
-    public String updateUser(@RequestBody @Validated({UserInster.class, UserUpdate.class})UserInfo userInfo){
+    public String updateUser(@RequestBody @Validated({UserInfo.Default.class, UserInfo.UserUpdate.class})UserInfo userInfo){
         System.out.println("修改");
         return "";
     }

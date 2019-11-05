@@ -125,6 +125,16 @@
             <version>${jetty.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>
